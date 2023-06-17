@@ -21,5 +21,6 @@ func ConnectDatabase() {
 	if err != nil {
 		panic("Could not connect to database")
 	}
+	database.AutoMigrate(&User{}, &Subscription{}, &SubscriptionItem{})
 	DB = database
 }
