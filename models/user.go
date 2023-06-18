@@ -26,7 +26,20 @@ func (u *User) CreateStripeCustomer() (*string, error) {
 		PreferredLocales: stripe.StringSlice([]string{"en", "es"}),
 	}
 	c, err := customer.New(params)
-	if err != nil {
+	if err != nil { 
+		return nil, err
+	}
+	return &c.ID, nil
+}
+
+func (u *User) UpdateStripeCustomer(stripeID string) (*string, error) {
+	params := &stripe.CustomerParams{
+		Name:             stripe.String(u.Name),
+		Email:            stripe.String(u.Email),
+		PreferredLocales: stripe.StringSlice([]string{"en", "es"}),
+	}
+	c, err := customer.Update(stripeID, params)
+	if err != nil { 
 		return nil, err
 	}
 	return &c.ID, nil
