@@ -5,6 +5,7 @@ import (
 
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/customer"
+	"github.com/stripe/stripe-go/v74/setupintent"
 	"gorm.io/gorm"
 )
 
@@ -43,4 +44,18 @@ func (u *User) UpdateStripeCustomer(stripeID string) (*string, error) {
 		return nil, err
 	}
 	return &c.ID, nil
+}
+
+func (u *User) CreateSetupIntent() (*string, error) {
+	params := &stripe.SetupIntentParams{
+		PaymentMethodTypes: []*string{
+		  stripe.String("card"),
+		},
+		Customer: &u.StripeId,
+	}
+	si, err := setupintent.New(params)
+	if err != nil {
+		return nil, err
+	}
+	return &si.ClientSecret, nil
 }
