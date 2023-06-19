@@ -13,7 +13,7 @@ type User struct {
 	gorm.Model
 	Name          string         `json:"name" gorm:"size:50;notNull"`
 	Email         string         `json:"email" gorm:"size:50;notNull"`
-	StripeId      string         `json:"stripe_id"`
+	StripeID      string         `json:"stripe_id"`
 	PmType        sql.NullString `json:"pm_type"`
 	PmLastFour    sql.NullString `json:"pm_last_four" gorm:"size:4"`
 	TrialEndsAt   sql.NullTime   `json:"trial_ends_at"`
@@ -51,7 +51,7 @@ func (u *User) CreateSetupIntent() (*string, error) {
 		PaymentMethodTypes: []*string{
 		  stripe.String("card"),
 		},
-		Customer: &u.StripeId,
+		Customer: &u.StripeID,
 	}
 	si, err := setupintent.New(params)
 	if err != nil {
