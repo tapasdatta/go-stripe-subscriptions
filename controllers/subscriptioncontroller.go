@@ -6,13 +6,9 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/gorilla/mux"
 	"github.com/tapasdatta/go-stripe-subscriptions/models"
 	"github.com/tapasdatta/go-stripe-subscriptions/utils"
-	"gorm.io/gorm/clause"
 )
-
-// var validate *validator.Validate
 
 type SubscriptionInput struct {
 	CustomerID  string `json:"customer_id" validate:"required"`
@@ -35,26 +31,10 @@ func CreateSubscription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//**create subscription
-	params := &stripe.SubscriptionParams{
-		Customer: stripe.String("cus_9s6XFG2Qq6Fe7v"),
-		Items: []*stripe.SubscriptionItemsParams{
-		  {
-			Price: stripe.String("price_1NKf0l2eZvKYlo2CCjzb0KEW"),
-		  },
-		},
-	  }
-	  s, err := sub.New(params)
-	subscriptionParams := &stripe.SubscriptionParams{
-        Customer: &customerID,
-        Items: []*stripe.SubscriptionItemsParams{
-            {
-                Plan: &priceID,
-            },
-        },
-        TrialEnd:             &trialEnd,
-        DefaultPaymentMethod: &paymentMethodID,
-    }
-    sb, err := sub.New(subscriptionParams)}
-
-	utils.RespondWithJson(w, 201, user)
+	sub, err := user.CreateSubscription(input.PriceID, input.PaymentToken, 7 * 24)
+	if err != nil {
+		utils.RespondWithError(w, 420, "Can't created subscription")
+	}
+	data := map[string]uint{"subscription_id": *sub}
+	utils.RespondWithJson(w, 201, data)
 }

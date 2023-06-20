@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/stripe/stripe-go/sub"
 	"github.com/stripe/stripe-go/v74"
+	"github.com/stripe/stripe-go/v74/subscription"
 	"gorm.io/gorm"
 )
 
@@ -33,7 +33,7 @@ func (u *User) CreateSubscription(priceID string, paymentToken string, trialEnd 
 		TrialEnd: &trialEnd,
 		DefaultPaymentMethod: &paymentToken,
 	}
-	s, err := sub.New(params)
+	s, err := subscription.New(params)
 	if err != nil {
 		return nil, err
 	}
@@ -41,9 +41,9 @@ func (u *User) CreateSubscription(priceID string, paymentToken string, trialEnd 
 		Model:             gorm.Model{},
 		UserID:            u.ID,
 		Name:              "default",
-		StripeID:          &s.ID,
-		StripeStatus:      &s.Status,
-		TrialEndsAt:       time.Now().Add(time.Hour * 7 * 24),
+		StripeID:          s.ID,
+		StripeStatus:     string(s.Status),
+		TrialEndsAt:       time.Now().Add(time.Hour * time.Duration(trialEnd)),
 	}
 	DB.Create(subscription)
 	return &subscription.ID, nil

@@ -37,7 +37,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.RespondWithError(w, 500, "something went wrong!")
 	}
-	user.StripeId = *cID
+	user.StripeID = *cID
 	//**Save into DB
 	models.DB.Create(user)
 	utils.RespondWithJson(w, 201, user)
@@ -59,7 +59,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, 420, "validation error")
 	}
 	//**Update stripe customer
-	_, err = user.UpdateStripeCustomer(user.StripeId)
+	_, err = user.UpdateStripeCustomer(user.StripeID)
 	if err != nil {
 		utils.RespondWithError(w, 500, "something went wrong!")
 	}
