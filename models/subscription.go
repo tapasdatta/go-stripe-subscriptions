@@ -42,9 +42,21 @@ func (u *User) CreateSubscription(priceID string, paymentToken string, trialEnd 
 		UserID:            u.ID,
 		Name:              "default",
 		StripeID:          s.ID,
-		StripeStatus:     string(s.Status),
+		StripeStatus:      string(s.Status),
 		TrialEndsAt:       time.Now().Add(time.Hour * time.Duration(trialEnd)),
 	}
 	DB.Create(subscription)
 	return &subscription.ID, nil
+}
+
+func (s *Subscription) CancelSubscription() (error) {
+	cancel := true
+    subscriptionParams := &stripe.SubscriptionParams{
+        CancelAtPeriodEnd: &cancel,
+    }
+    _, err := subscription.Update(s.StripeID, subscriptionParams)
+    if err != nil {
+        return err
+    }
+	return nil
 }
